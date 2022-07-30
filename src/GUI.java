@@ -16,6 +16,7 @@ public class GUI {
   private int currentColor = 0;
   private boolean changedColor = false;
   private boolean clicked = false;
+  private boolean ignored = false;
   private static final String[] colorStrings = {"Red", "Green", "Blue", "Orange", "Yellow", "White"};
   private Color[] pickedColorArray = new Color[6];
 
@@ -85,7 +86,7 @@ public class GUI {
     button.setBounds(950, 580, 100,25);
     button.setVisible(true);
     button.addActionListener(e -> {
-      pickedColorArray[currentColor] = IGNORE_COLOR;
+      ignored = true;
     });
     frame.add(button);
   }
@@ -113,12 +114,16 @@ public class GUI {
       if (changedColor) {
         g.clearRect(800, 600, 100, 50);
         changedColor = false;
+        g.setColor(Pixelator.colorArray[currentColor]);
+        g.drawString("Pick " + colorStrings[currentColor], 800, 628);
       }
-      g.setColor(Pixelator.colorArray[currentColor]);
-      g.drawString("Pick " + colorStrings[currentColor], 800, 628);
+      if (ignored) {
+        ignored = false;
+        pickedColorArray[currentColor] = IGNORE_COLOR;
+        return pickedColorArray;
+      }
       if (clicked) {
         clicked = false;
-        System.out.println(mouseX + " " + mouseY);
         if (mouseX < 600 && mouseY < 600) {
             pickedColorArray[currentColor] = new Color(image.getRGB(mouseX, mouseY));
         }
